@@ -5,7 +5,7 @@ class munin::params::master {
 
   $graph_strategy           = 'cgi'
   $html_strategy            = 'cgi'
-  $node_definitions         = ''
+  $node_definitions         = {}
   $collect_nodes            = 'enabled'
   $dbdir                    = undef
   $htmldir                  = undef
@@ -19,15 +19,22 @@ class munin::params::master {
   $host_name                = $::fqdn
 
   case $::osfamily {
+    'Archlinux',
     'Debian',
     'RedHat': {
-      $config_root = '/etc/munin'
+      $config_root      = '/etc/munin'
+      $file_group       = 'root'
+      $munin_server_pkg = 'munin'
     }
     'Solaris': {
-      $config_root = '/opt/local/etc/munin'
+      $config_root      = '/opt/local/etc/munin'
+      $file_group       = 'root'
+      $munin_server_pkg = 'munin'
     }
-    'FreeBSD': {
-      $config_root = '/usr/local/etc/munin'
+    'DragonFly', 'FreeBSD': {
+      $config_root      = '/usr/local/etc/munin'
+      $file_group       = 'wheel'
+      $munin_server_pkg = 'munin-master'
     }
     default: {
       fail($message)
